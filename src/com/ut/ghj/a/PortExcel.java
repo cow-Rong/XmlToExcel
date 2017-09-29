@@ -1,6 +1,5 @@
 package com.ut.ghj.a;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -17,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.ut.ghj.mod.ObjectPersistSpaceMod;
 import com.ut.ghj.poi.KVAnyPair;
 import com.ut.ghj.poi.ObjectPersistSpace;
 import com.ut.ghj.poi.S;
@@ -25,35 +25,16 @@ import com.ut.ghj.td.TDXML;
 
 public class PortExcel {
 	public static void main(String[] args) {
-	
-/*		ObjectPersistSpaceMod objectPersistSpaceMod=(ObjectPersistSpaceMod) convertXmlFileToObjectMode(ObjectPersistSpaceMod.class,
+		
+		ObjectPersistSpaceMod objectPersistSpaceMod=(ObjectPersistSpaceMod) convertXmlFileToObjectMode(ObjectPersistSpaceMod.class,
 				"C:\\Users\\HZ08888\\Desktop\\TN765.V7.mo");
 		
-		List<S> s=objectPersistSpaceMod.getSpec().getAttrTables();*/
-		List<S> s=new ArrayList<S>();
-		
-		S ss1=new S();
-		ss1.setVal("TrunkMembers.V0");
-		
-		S ss2=new S();
-		ss2.setVal("TrunkAggValidMember.V0");
-		
-		
-		S ss3=new S();
-		ss3.setVal("Cfm1agMepCCMStat.V0");
-		
-		S ss4=new S();
-		ss4.setVal("ResourceStat.V0");
-		
-		S ss5=new S();
-		ss5.setVal("TblParityChkCfg.V0");
-		
-		
-		s.add(ss1);
-		s.add(ss2);
-		s.add(ss3);
-		s.add(ss4);
-		s.add(ss5);
+		List<S> s=objectPersistSpaceMod.getSpec().getAttrTables();
+
+/*		S ss=new S();
+		ss.setVal("T1AlmAttrcfg.V1");
+ 		List<S> s=new ArrayList<S>();
+ 		s.add(ss);*/
 		try {
 			importExcel(s);
 		} catch (IOException e) {
@@ -66,7 +47,9 @@ public class PortExcel {
 	
 	public static void importExcel(List<S> s) throws IOException{
 		
-
+		
+		
+	      
 		//创建HSSFWorkbook对象
 		HSSFWorkbook wb = new HSSFWorkbook();
 		//创建HSSFSheet对象
@@ -96,12 +79,15 @@ public class PortExcel {
 			//输出Excel文件
 			
 			List<TableSpecField> tList=objectPersistSpace.getSpec().getField();
+			
+			int rowV=0;
 			loop :for(int i=0;i<tList.size();i++){
 				
 				List<KVAnyPair> kList=objectPersistSpace.getSpec().getField().get(i).getParam();
 				for(KVAnyPair k :kList){
+					
 					if(k.getKey().equals("Hidden")){
-						 break loop;
+						continue loop;
 					}
 				}
 				
@@ -128,8 +114,8 @@ public class PortExcel {
 						}
 					}
 				}
-				
-				HSSFRow rowTemp = sheet.createRow(i+1);
+				rowV++;
+				HSSFRow rowTemp = sheet.createRow(rowV);
 				rowTemp.createCell(0).setCellValue(Attribute);
 				rowTemp.createCell(1).setCellValue(Type);
 				rowTemp.createCell(2).setCellValue(Constraint);
@@ -144,7 +130,7 @@ public class PortExcel {
 		
 		
 		
-		FileOutputStream output=new FileOutputStream("d:spec1\\"+765+".xls");
+		FileOutputStream output=new FileOutputStream("d:spec\\"+765+".xls");
 	
 		wb.write(output);
 
@@ -156,16 +142,15 @@ public class PortExcel {
 	   public static Object convertXmlFileToObject(Class clazz, String xmlPath) {  
 	        Object xmlObject = null;  
 	        
-	        String s715 ="D:\\tn715\\";
-	        String s705 ="D:\\tn705\\";
+	        String s715 ="D:tn715\\";
+	        String s705 ="D:tn705\\";
 	        String ts=".ts";
 	        try {  
 	            JAXBContext context = JAXBContext.newInstance(clazz);  
-	            Unmarshaller unmarshaller = context.createUnmarshaller(); 
+	            Unmarshaller unmarshaller = context.createUnmarshaller();  
 	            FileReader fr = null;  
 	            try {  
 	                fr = new FileReader(s715+xmlPath+ts);  
-	                
 	            } catch (FileNotFoundException e) {  
 	            	try {
 						fr = new FileReader(s705+xmlPath+ts);
@@ -189,8 +174,7 @@ public class PortExcel {
 	            Unmarshaller unmarshaller = context.createUnmarshaller();  
 	            FileReader fr = null;  
 	            try {  
-	            	File file = new File(xmlPath,"UTF-8");
-	                fr = new FileReader(file);  
+	                fr = new FileReader(xmlPath);  
 	            } catch (FileNotFoundException e) {  
 	                e.printStackTrace();  
 	            }  
